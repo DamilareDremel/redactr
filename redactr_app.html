@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Redaction App</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>Text Redaction App</h1>
+    <form id="redactionForm">
+        <label for="text">Enter Text:</label>
+        <textarea id="text" rows="4" cols="50"></textarea><br>
+        <label for="redactWords">Words to Redact (separated by space):</label>
+        <input type="text" id="redactWords"><br>
+        <label for="replacement">Replacement (default is ****):</label>
+        <input type="text" id="replacement" value="****"><br>
+        <button type="button" onclick="redactText()">Redact Now</button>
+    </form>
+    <p id="redactedText"></p>
+    <p id="stats"></p>
+
+    <script>
+        function redactText() {
+            const originalText = document.getElementById("text").value;
+            const redactWords = document.getElementById("redactWords").value.split(' ');
+            const replacement = document.getElementById("replacement").value;
+
+            let redactedText = originalText;
+            let wordsScanned = 0;
+            let wordsRedacted = 0;
+            let charactersRedacted = 0;
+
+            redactWords.forEach(word => {
+                const regex = new RegExp('\\b' + word + '\\b', 'gi');
+                const matches = redactedText.match(regex);
+                if (matches) {
+                    wordsScanned += matches.length;
+                    redactedText = redactedText.replace(regex, replacement);
+                    wordsRedacted += matches.length;
+                    charactersRedacted += (replacement.length - word.length) * matches.length;
+                }
+            });
+
+            document.getElementById("redactedText").innerText = redactedText;
+            document.getElementById("stats").innerText = `Words Scanned: ${wordsScanned}, Words Redacted: ${wordsRedacted}, Characters Redacted: ${charactersRedacted}`;
+        }
+    </script>
+</body>
+</html>
